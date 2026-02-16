@@ -1,0 +1,26 @@
+{
+  "name": "evil-spirit-detector",
+  "version": "1.0.0",
+  "private": true,
+  "description": "악귀 탐지기 - 직장 내 유해 언행 탐지 서비스",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:web": "pnpm --filter @evil-spirit/web dev",
+    "dev:api": "pnpm --filter @evil-spirit/api dev",
+    "build": "pnpm -r build",
+    "build:web": "pnpm --filter @evil-spirit/web build",
+    "build:api": "pnpm --filter @evil-spirit/api build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@9.5.0"
+}
