@@ -100,7 +100,7 @@ export const groupApi = {
   getGroup: (id: string) =>
     api.get<ApiResponse<{ id: string; label: string; memberCount: number; postCount: number; isCreator: boolean; inviteToken?: string }>>(`/groups/${id}`),
   join: (inviteToken: string) =>
-    api.post<ApiResponse<{ id: string; label: string; alreadyMember: boolean }>>('/groups/join', { inviteToken }),
+    api.post<ApiResponse<{ id: string; label: string; alreadyMember: boolean; memberCount?: number; postCount?: number }>>('/groups/join', { inviteToken }),
   verifyInvite: (token: string) =>
     api.get<ApiResponse<{ valid: boolean; groupLabel: string; memberCount: number; isExpired: boolean }>>(`/groups/invite/${token}`),
   refreshInvite: (id: string) =>
