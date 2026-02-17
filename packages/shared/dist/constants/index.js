@@ -24,10 +24,14 @@ exports.REACTION_LABELS = {
 };
 // Predefined Comments
 exports.PREDEFINED_COMMENTS = [
+    '많이 힘드셨겠어요',
+    '저도 비슷한 경험이 있어요',
+    '응원합니다',
+    '화이팅!',
+    // Legacy comments (for backward compatibility)
     '힘내세요',
     '공감해요',
     '화이팅',
-    '응원합니다',
     '같은 경험이 있어요',
 ];
 // Detection Levels
