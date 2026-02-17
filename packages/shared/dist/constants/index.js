@@ -1,19 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.INVITE_TOKEN_EXPIRY_DAYS = exports.INVITE_TOKEN_LENGTH = exports.DASHBOARD_THRESHOLD = exports.FORBIDDEN_WORDS = exports.NOTICES = exports.EXTERNAL_LINKS = exports.VALIDATION = exports.DASHBOARD_PERIODS = exports.REPORT_REASONS = exports.PATTERN_CATEGORIES = exports.DETECTION_LEVELS = exports.PREDEFINED_COMMENTS = exports.REACTION_LABELS = exports.REACTION_TYPES = exports.EMOTION_TAGS = exports.POST_TAGS = void 0;
-// Post Tags
+// Post Tags (상황 선택)
 exports.POST_TAGS = [
-    '야근',
-    '인격모독',
     '업무지시',
-    '평가',
-    '회식',
-    '보고',
     '회의',
+    '회식',
+    '평가',
+    '일상대화',
+    '채팅/메신저',
     '기타',
 ];
-// Emotion Tags
-exports.EMOTION_TAGS = ['분노', '슬픔', '불안', '무력감', '혼란', '기타'];
+// Emotion Tags (느낀 감정)
+exports.EMOTION_TAGS = [
+    '분노',
+    '억울함',
+    '무력감',
+    '당혹감',
+    '슬픔',
+    '답답함',
+    '불안',
+    '수치심',
+];
 // Reaction Types
 exports.REACTION_TYPES = ['empathy', 'cheer', 'angry', 'sad'];
 exports.REACTION_LABELS = {

@@ -1,5 +1,5 @@
-export declare const POST_TAGS: readonly ["야근", "인격모독", "업무지시", "평가", "회식", "보고", "회의", "기타"];
-export declare const EMOTION_TAGS: readonly ["분노", "슬픔", "불안", "무력감", "혼란", "기타"];
+export declare const POST_TAGS: readonly ["업무지시", "회의", "회식", "평가", "일상대화", "채팅/메신저", "기타"];
+export declare const EMOTION_TAGS: readonly ["분노", "억울함", "무력감", "당혹감", "슬픔", "답답함", "불안", "수치심"];
 export declare const REACTION_TYPES: readonly ["empathy", "cheer", "angry", "sad"];
 export declare const REACTION_LABELS: Record<string, string>;
 export declare const PREDEFINED_COMMENTS: readonly ["많이 힘드셨겠어요", "저도 비슷한 경험이 있어요", "응원합니다", "화이팅!", "힘내세요", "공감해요", "화이팅", "같은 경험이 있어요"];

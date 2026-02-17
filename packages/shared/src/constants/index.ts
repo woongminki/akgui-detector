@@ -1,17 +1,25 @@
-// Post Tags
+// Post Tags (상황 선택)
 export const POST_TAGS = [
-  '야근',
-  '인격모독',
   '업무지시',
-  '평가',
-  '회식',
-  '보고',
   '회의',
+  '회식',
+  '평가',
+  '일상대화',
+  '채팅/메신저',
   '기타',
 ] as const;
 
-// Emotion Tags
-export const EMOTION_TAGS = ['분노', '슬픔', '불안', '무력감', '혼란', '기타'] as const;
+// Emotion Tags (느낀 감정)
+export const EMOTION_TAGS = [
+  '분노',
+  '억울함',
+  '무력감',
+  '당혹감',
+  '슬픔',
+  '답답함',
+  '불안',
+  '수치심',
+] as const;
 
 // Reaction Types
 export const REACTION_TYPES = ['empathy', 'cheer', 'angry', 'sad'] as const;
