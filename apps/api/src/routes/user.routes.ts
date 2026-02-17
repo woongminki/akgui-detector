@@ -10,7 +10,7 @@ router.get('/me', authenticate, asyncHandler(userController.getMe));
 // PATCH /api/users/me/nickname - 닉네임 변경
 router.patch('/me/nickname', authenticate, asyncHandler(userController.updateNickname));
 
-// GET /api/users/nickname/check - 닉네임 중복 확인
-router.get('/nickname/check', asyncHandler(userController.checkNickname));
+// GET /api/users/nickname/check - 닉네임 중복 확인 (로그인 필요)
+router.get('/nickname/check', authenticate, asyncHandler(userController.checkNickname));
 
 export default router;

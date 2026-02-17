@@ -53,7 +53,7 @@ export const updateNickname = async (userId: string, newNickname: string) => {
   };
 };
 
-export const checkNickname = async (nickname: string) => {
+export const checkNickname = async (nickname: string, userId?: string) => {
   // Check forbidden words
   const forbiddenCheck = checkForbiddenWords(nickname);
   if (!forbiddenCheck.isValid) {
@@ -63,8 +63,12 @@ export const checkNickname = async (nickname: string) => {
     };
   }
 
-  // Check uniqueness
-  const existing = await User.findOne({ nickname });
+  // Check uniqueness (exclude current user if provided)
+  const query: { nickname: string; _id?: { $ne: string } } = { nickname };
+  if (userId) {
+    query._id = { $ne: userId };
+  }
+  const existing = await User.findOne(query);
 
   return {
     available: !existing,

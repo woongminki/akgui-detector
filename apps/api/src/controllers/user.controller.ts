@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { z } from 'zod';
 import { AuthRequest } from '../middlewares/index.js';
 import * as userService from '../services/user.service.js';
@@ -42,10 +42,11 @@ export const updateNickname = async (req: AuthRequest, res: Response): Promise<v
   });
 };
 
-export const checkNickname = async (req: Request, res: Response): Promise<void> => {
+export const checkNickname = async (req: AuthRequest, res: Response): Promise<void> => {
+  const userId = req.userId;
   const { nickname } = checkNicknameSchema.parse(req.query);
 
-  const result = await userService.checkNickname(nickname);
+  const result = await userService.checkNickname(nickname, userId);
 
   res.json({
     success: true,
