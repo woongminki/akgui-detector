@@ -192,7 +192,7 @@ export function HomeScreen() {
                 quote={post.content}
                 emotion={post.emotionTag || ""}
                 score={post.detectionScore || 0}
-                likes={post.reactionCounts?.heart || 0}
+                likes={post.reactionCounts?.empathy || 0}
                 comments={post.commentCount || 0}
                 createdAt={formatRelativeTime(post.createdAt)}
                 isLiked={post.userReactions?.includes("heart")}
