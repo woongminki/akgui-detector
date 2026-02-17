@@ -27,7 +27,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # Copy standalone build
@@ -35,10 +34,5 @@ COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
 
-# Debug: verify files exist
-RUN ls -la /app/apps/web/ && ls -la /app/apps/web/.next/
-
-EXPOSE 3000
-
-# Use shell form for better error logging
+# Use Railway's injected PORT
 CMD node apps/web/server.js
