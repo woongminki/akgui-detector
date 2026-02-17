@@ -109,12 +109,18 @@ export const joinGroup = async (userId: string, inviteToken: string) => {
     groupId: group._id,
   });
 
-  await RegionGroup.findByIdAndUpdate(group._id, { $inc: { memberCount: 1 } });
+  const updatedGroup = await RegionGroup.findByIdAndUpdate(
+    group._id,
+    { $inc: { memberCount: 1 } },
+    { new: true }
+  );
 
   return {
     id: group._id.toString(),
     label: group.label,
     alreadyMember: false,
+    memberCount: updatedGroup?.memberCount || 1,
+    postCount: updatedGroup?.postCount || 0,
   };
 };
 

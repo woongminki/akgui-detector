@@ -22,7 +22,7 @@ type Period = "7d" | "30d" | "all";
 
 export function GroupScreen() {
   const router = useRouter();
-  const { currentGroup, groups } = useGroupStore();
+  const { currentGroup, groups, fetchGroups, isLoading: groupsLoading } = useGroupStore();
   const { toast } = useToast();
 
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
@@ -30,6 +30,11 @@ export function GroupScreen() {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // 마운트 시 그룹 목록 불러오기
+  useEffect(() => {
+    fetchGroups();
+  }, [fetchGroups]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,6 +95,15 @@ export function GroupScreen() {
       });
     }
   };
+
+  // 그룹 로딩 중
+  if (groupsLoading) {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">그룹 목록 로딩 중...</div>
+      </div>
+    );
+  }
 
   if (groups.length === 0) {
     return (

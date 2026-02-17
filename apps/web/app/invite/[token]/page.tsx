@@ -56,13 +56,13 @@ export default function InvitePage() {
     try {
       const response = await groupApi.join(token);
       if (response.data.success && response.data.data) {
-        const { id, label, alreadyMember } = response.data.data;
+        const { id, label, alreadyMember, memberCount, postCount } = response.data.data;
 
         if (alreadyMember) {
           toast({ title: "이미 참여 중인 그룹입니다." });
         } else {
-          addGroup({ id, label, memberCount: 1, postCount: 0 });
-          setCurrentGroup({ id, label, memberCount: 1, postCount: 0 });
+          addGroup({ id, label, memberCount: memberCount || 1, postCount: postCount || 0 });
+          setCurrentGroup({ id, label, memberCount: memberCount || 1, postCount: postCount || 0 });
           toast({ title: "그룹에 참여했습니다!" });
         }
 
