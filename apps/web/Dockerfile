@@ -23,4 +23,5 @@ RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["pnpm", "start"]
+# Use next start directly
+CMD ["npx", "next", "start"]
