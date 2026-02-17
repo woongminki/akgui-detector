@@ -33,11 +33,13 @@ export const useGroupStore = create<GroupState>()(
             const groups = response.data.data;
             const currentGroup = get().currentGroup;
 
-            // 현재 그룹이 사용자의 그룹 목록에 없으면 초기화
-            const isCurrentGroupValid = currentGroup && groups.some(g => g.id === currentGroup.id);
+            // 현재 그룹이 사용자의 그룹 목록에 있으면 최신 데이터로 업데이트
+            const updatedCurrentGroup = currentGroup
+              ? groups.find(g => g.id === currentGroup.id)
+              : null;
 
-            if (isCurrentGroupValid) {
-              set({ groups });
+            if (updatedCurrentGroup) {
+              set({ groups, currentGroup: updatedCurrentGroup });
             } else if (groups.length > 0) {
               // 첫 번째 그룹을 현재 그룹으로 설정
               set({ groups, currentGroup: groups[0] });
