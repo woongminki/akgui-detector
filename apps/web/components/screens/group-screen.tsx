@@ -76,18 +76,21 @@ export function GroupScreen() {
       if (inviteToken) {
         const inviteUrl = `${window.location.origin}/invite/${inviteToken}`;
 
-        if (navigator.share) {
-          await navigator.share({
-            title: `악귀 탐지기 - ${currentGroup.label}`,
-            text: "우리 그룹에 참여하세요!",
-            url: inviteUrl,
-          });
-        } else {
-          await navigator.clipboard.writeText(inviteUrl);
-          toast({ title: "초대 링크가 복사되었습니다." });
-        }
+        // 항상 클립보드에 복사 (navigator.share 사용 안 함)
+        await navigator.clipboard.writeText(inviteUrl);
+        toast({
+          title: "초대 링크가 복사되었습니다!",
+          description: inviteUrl,
+        });
+      } else {
+        toast({
+          title: "권한 없음",
+          description: "그룹 생성자만 초대 링크를 공유할 수 있습니다.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Share error:", error);
       toast({
         title: "오류",
         description: "초대 링크를 가져오는 데 실패했습니다.",
