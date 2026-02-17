@@ -18,6 +18,12 @@ RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/apps/web
 
+# Build-time environment variables for Next.js (public, safe to expose)
+ENV NEXT_PUBLIC_APP_URL=https://evil-spiritweb-production.up.railway.app
+ENV NEXT_PUBLIC_API_URL=https://akgui-detector-production.up.railway.app/api
+ENV NEXT_PUBLIC_KAKAO_CLIENT_ID=92c3b8a87fe1dbcc5828c4fe811c5753
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=891556613588-a5paousn7i7m9rqd7drtc2o5eh2jq6ib.apps.googleusercontent.com
+
 # Build with standalone output
 RUN pnpm build
 
