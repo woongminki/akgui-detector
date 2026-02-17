@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 RUN npm install -g pnpm
 
@@ -18,10 +18,22 @@ RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/apps/web
 
-# Build
+# Build with standalone output
 RUN pnpm build
+
+# Production stage - minimal image
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Copy standalone build
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
 
 EXPOSE 3000
 
-# Use next start directly
-CMD ["npx", "next", "start"]
+CMD ["node", "apps/web/server.js"]
