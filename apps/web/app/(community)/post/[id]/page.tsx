@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Bookmark, Flag, MessageCircle, ExternalLink, Trash2, Heart } from "lucide-react";
+import { ArrowLeft, Bookmark, Flag, MessageCircle, ExternalLink, Trash2, Plus, X } from "lucide-react";
 import { ScoreGauge, getScoreInfo } from "@/components/score-gauge";
 import { cn } from "@/lib/utils";
 import { postApi, reactionApi, commentApi, reportApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
-const REACTION_LABELS: Record<string, string> = {
-  empathy: "공감해요",
-  cheer: "힘내요",
-  angry: "화나요",
-  sad: "슬퍼요",
+const REACTION_TYPES = ["empathy", "cheer", "angry", "sad"] as const;
+
+const REACTION_CONFIG: Record<string, { emoji: string; label: string }> = {
+  empathy: { emoji: "💙", label: "공감해요" },
+  cheer: { emoji: "💪", label: "힘내요" },
+  angry: { emoji: "😠", label: "화나요" },
+  sad: { emoji: "😢", label: "슬퍼요" },
 };
 
 const PREDEFINED_COMMENTS = [
@@ -33,6 +35,7 @@ export default function PostDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -90,6 +93,7 @@ export default function PostDetailPage() {
           }));
         }
       }
+      setShowReactionPicker(false);
     } catch (error: any) {
       console.error("Reaction error:", error);
     }
@@ -311,38 +315,90 @@ export default function PostDetailPage() {
         </p>
       </div>
 
-      {/* Reactions */}
+      {/* Reactions - Different view for owner vs reader */}
       <div className="mb-6 rounded-2xl border border-border bg-card p-4">
-        <div className="flex justify-around">
-          {Object.entries(REACTION_LABELS).map(([type, label]) => {
-            const isSelected = post.userReactions?.[0] === type;
-            return (
+        {post.isOwner ? (
+          /* Author view: Show all reactions summary */
+          <>
+            <p className="mb-3 text-sm font-medium text-muted-foreground">받은 공감</p>
+            <div className="flex justify-around">
+              {REACTION_TYPES.map((type) => {
+                const config = REACTION_CONFIG[type];
+                const count = post.reactionCounts?.[type] || 0;
+                return (
+                  <div
+                    key={type}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <span className="text-2xl">{config.emoji}</span>
+                    <span className="text-xs text-muted-foreground">{config.label}</span>
+                    <span className="text-sm font-medium text-foreground">{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          /* Reader view: Single reaction selection */
+          <div className="flex items-center gap-3">
+            {post.userReactions?.[0] ? (
+              /* User has reacted - show their reaction */
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowReactionPicker(!showReactionPicker)}
+                  className="flex items-center gap-2 rounded-full bg-primary/20 px-4 py-2 transition-colors hover:bg-primary/30"
+                >
+                  <span className="text-xl">{REACTION_CONFIG[post.userReactions[0]].emoji}</span>
+                  <span className="text-sm font-medium text-primary">
+                    {REACTION_CONFIG[post.userReactions[0]].label}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleReaction(post.userReactions[0])}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              /* User has not reacted - show add button */
               <button
-                key={type}
                 type="button"
-                onClick={() => handleReaction(type)}
-                className={cn(
-                  "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all hover:scale-105",
-                  isSelected && "bg-primary/20 ring-2 ring-primary"
-                )}
+                onClick={() => setShowReactionPicker(!showReactionPicker)}
+                className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
               >
-                <span className="text-2xl">
-                  {type === "empathy" && "💙"}
-                  {type === "cheer" && "💪"}
-                  {type === "angry" && "😠"}
-                  {type === "sad" && "😢"}
-                </span>
-                <span className={cn(
-                  "text-xs",
-                  isSelected ? "text-primary font-medium" : "text-muted-foreground"
-                )}>{label}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {post.reactionCounts?.[type] || 0}
-                </span>
+                <Plus className="h-4 w-4" />
+                공감하기
               </button>
-            );
-          })}
-        </div>
+            )}
+
+            {/* Reaction picker popup */}
+            {showReactionPicker && (
+              <div className="flex items-center gap-1 rounded-full bg-secondary p-1">
+                {REACTION_TYPES.map((type) => {
+                  const config = REACTION_CONFIG[type];
+                  const isSelected = post.userReactions?.[0] === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => handleReaction(type)}
+                      className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-full text-xl transition-all hover:scale-110 hover:bg-primary/20",
+                        isSelected && "bg-primary/20 ring-2 ring-primary"
+                      )}
+                      title={config.label}
+                    >
+                      {config.emoji}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Comments */}
