@@ -69,22 +69,29 @@ export default function PostDetailPage() {
   }, [postId, router, toast]);
 
   const handleReaction = async (type: string) => {
+    const currentReaction = post.userReactions?.[0];
+
     try {
-      const response = await reactionApi.add(postId, type);
-      if (response.data.success && response.data.data) {
-        setPost((prev: any) => ({
-          ...prev,
-          reactionCounts: response.data.data!.reactionCounts,
-        }));
-      }
-    } catch (error: any) {
-      if (error.response?.data?.error?.code === "ALREADY_REACTED") {
+      if (currentReaction === type) {
+        // Remove reaction if clicking the same one
         await reactionApi.remove(postId, type);
         const response = await postApi.get(postId);
         if (response.data.success && response.data.data) {
           setPost(response.data.data);
         }
+      } else {
+        // Add/replace reaction
+        const response = await reactionApi.add(postId, type);
+        if (response.data.success && response.data.data) {
+          setPost((prev: any) => ({
+            ...prev,
+            reactionCounts: response.data.data!.reactionCounts,
+            userReactions: [type],
+          }));
+        }
       }
+    } catch (error: any) {
+      console.error("Reaction error:", error);
     }
   };
 
@@ -307,25 +314,34 @@ export default function PostDetailPage() {
       {/* Reactions */}
       <div className="mb-6 rounded-2xl border border-border bg-card p-4">
         <div className="flex justify-around">
-          {Object.entries(REACTION_LABELS).map(([type, label]) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => handleReaction(type)}
-              className="flex flex-col items-center gap-1 transition-transform hover:scale-105"
-            >
-              <span className="text-2xl">
-                {type === "empathy" && "💙"}
-                {type === "cheer" && "💪"}
-                {type === "angry" && "😠"}
-                {type === "sad" && "😢"}
-              </span>
-              <span className="text-xs text-muted-foreground">{label}</span>
-              <span className="text-sm font-medium text-foreground">
-                {post.reactionCounts?.[type] || 0}
-              </span>
-            </button>
-          ))}
+          {Object.entries(REACTION_LABELS).map(([type, label]) => {
+            const isSelected = post.userReactions?.[0] === type;
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => handleReaction(type)}
+                className={cn(
+                  "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all hover:scale-105",
+                  isSelected && "bg-primary/20 ring-2 ring-primary"
+                )}
+              >
+                <span className="text-2xl">
+                  {type === "empathy" && "💙"}
+                  {type === "cheer" && "💪"}
+                  {type === "angry" && "😠"}
+                  {type === "sad" && "😢"}
+                </span>
+                <span className={cn(
+                  "text-xs",
+                  isSelected ? "text-primary font-medium" : "text-muted-foreground"
+                )}>{label}</span>
+                <span className="text-sm font-medium text-foreground">
+                  {post.reactionCounts?.[type] || 0}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

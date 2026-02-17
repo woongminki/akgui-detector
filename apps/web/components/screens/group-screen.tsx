@@ -310,23 +310,29 @@ export function GroupScreen() {
               아직 작성된 글이 없습니다.
             </div>
           ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post.id}
-                id={post.id}
-                nickname={post.authorNickname || "익명"}
-                situationTag={post.tags?.[0] || "일반"}
-                quote={post.content}
-                emotion={post.emotionTag || ""}
-                score={post.detectionScore || 0}
-                likes={post.reactionCounts?.empathy || 0}
-                comments={post.commentCount || 0}
-                createdAt={formatRelativeTime(post.createdAt)}
-                isLiked={post.userReactions?.includes("heart")}
-                isBookmarked={post.isBookmarked}
-                onClick={() => router.push(`/post/${post.id}`)}
-              />
-            ))
+            posts.map((post) => {
+              const totalReactions = (post.reactionCounts?.empathy || 0) +
+                (post.reactionCounts?.cheer || 0) +
+                (post.reactionCounts?.angry || 0) +
+                (post.reactionCounts?.sad || 0);
+              return (
+                <PostCard
+                  key={post.id}
+                  id={post.id}
+                  nickname={post.authorNickname || "익명"}
+                  situationTag={post.tags?.[0] || "일반"}
+                  quote={post.content}
+                  emotion={post.emotionTag || ""}
+                  score={post.detectionScore || 0}
+                  likes={totalReactions}
+                  comments={post.commentCount || 0}
+                  createdAt={formatRelativeTime(post.createdAt)}
+                  isLiked={post.userReactions?.length > 0}
+                  isBookmarked={post.isBookmarked}
+                  onClick={() => router.push(`/post/${post.id}`)}
+                />
+              );
+            })
           )}
         </div>
       )}

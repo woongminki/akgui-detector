@@ -27,19 +27,21 @@ export const addReaction = async (
     throw new AppError('그룹에 속해 있지 않습니다.', 403, 'NOT_MEMBER');
   }
 
-  try {
-    await Reaction.create({ postId, userId, type });
-
-    // Update reaction count
+  // Remove existing reaction if any (single reaction per user)
+  const existingReaction = await Reaction.findOneAndDelete({ postId, userId });
+  if (existingReaction) {
     await Post.findByIdAndUpdate(postId, {
-      $inc: { [`reactionCounts.${type}`]: 1 },
+      $inc: { [`reactionCounts.${existingReaction.type}`]: -1 },
     });
-  } catch (error: any) {
-    if (error.code === 11000) {
-      throw new AppError('이미 해당 리액션을 추가했습니다.', 409, 'ALREADY_REACTED');
-    }
-    throw error;
   }
+
+  // Add new reaction
+  await Reaction.create({ postId, userId, type });
+
+  // Update reaction count
+  await Post.findByIdAndUpdate(postId, {
+    $inc: { [`reactionCounts.${type}`]: 1 },
+  });
 
   // Get updated reaction counts
   const updatedPost = await Post.findById(postId);
