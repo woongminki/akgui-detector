@@ -123,6 +123,8 @@ export const postApi = {
     api.post<ApiResponse<{ bookmarked: boolean }>>(`/posts/${id}/bookmark`),
   removeBookmark: (id: string) =>
     api.delete<ApiResponse<{ bookmarked: boolean }>>(`/posts/${id}/bookmark`),
+  getTrending: (limit: number = 4) =>
+    api.get<ApiResponse<{ rank: number; keyword: string; count: number; trend: 'up' | 'down' | 'same' }[]>>(`/posts/trending?limit=${limit}`),
 };
 
 // Reaction API

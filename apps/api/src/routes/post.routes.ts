@@ -4,6 +4,9 @@ import * as postController from '../controllers/post.controller.js';
 
 const router = Router();
 
+// GET /api/posts/trending - 트렌딩 키워드 (must be before /:id)
+router.get('/trending', authenticate, asyncHandler(postController.getTrendingKeywords));
+
 // POST /api/posts - 글 작성
 router.post('/', authenticate, asyncHandler(postController.createPost));
 

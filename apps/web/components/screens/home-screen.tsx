@@ -8,7 +8,14 @@ import { PostCard } from "@/components/post-card";
 import { TrendCard } from "@/components/trend-card";
 import { useGroupStore } from "@/stores/group";
 import { useAuthStore } from "@/stores/auth";
-import { groupApi } from "@/lib/api";
+import { groupApi, postApi } from "@/lib/api";
+
+type TrendingKeyword = {
+  rank: number;
+  keyword: string;
+  count: number;
+  trend: "up" | "down" | "same";
+};
 
 export function HomeScreen() {
   const router = useRouter();
@@ -16,6 +23,7 @@ export function HomeScreen() {
   const { groups, currentGroup, fetchGroups, isLoading: groupLoading } = useGroupStore();
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [trendingKeywords, setTrendingKeywords] = useState<TrendingKeyword[]>([]);
 
   useEffect(() => {
     initialize();
@@ -58,13 +66,22 @@ export function HomeScreen() {
     fetchRecentPosts();
   }, [currentGroup, groupLoading]);
 
-  // Mock trending data (would come from API in production)
-  const trendingKeywords = [
-    { rank: 1, keyword: "야근해", count: 342, trend: "up" as const },
-    { rank: 2, keyword: "회식 참석해야지", count: 287, trend: "up" as const },
-    { rank: 3, keyword: "그것도 일이야?", count: 234, trend: "down" as const },
-    { rank: 4, keyword: "열정이 부족해", count: 198, trend: "same" as const },
-  ];
+  useEffect(() => {
+    const fetchTrendingKeywords = async () => {
+      if (!isAuthenticated) return;
+
+      try {
+        const response = await postApi.getTrending(4);
+        if (response.data.success && response.data.data) {
+          setTrendingKeywords(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch trending keywords:", error);
+      }
+    };
+
+    fetchTrendingKeywords();
+  }, [isAuthenticated]);
 
   if (authLoading || groupLoading) {
     return (
@@ -153,11 +170,17 @@ export function HomeScreen() {
             더보기
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          {trendingKeywords.map((item) => (
-            <TrendCard key={item.rank} {...item} />
-          ))}
-        </div>
+        {trendingKeywords.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2">
+            {trendingKeywords.map((item) => (
+              <TrendCard key={item.rank} {...item} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-border bg-card p-6 text-center text-muted-foreground">
+            아직 데이터가 부족합니다
+          </div>
+        )}
       </section>
 
       {/* Recent Posts */}

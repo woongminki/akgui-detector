@@ -97,6 +97,37 @@ export const getDashboardData = async (
   };
 };
 
+export const getGlobalTrendingKeywords = async (limit: number = 4) => {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 7); // Last 7 days
+
+  const posts = await Post.find({
+    isBlinded: false,
+    createdAt: { $gte: startDate },
+  }).select('matchedPatterns');
+
+  // Extract keywords from matched patterns
+  const keywordCounts: Record<string, number> = {};
+  for (const post of posts) {
+    for (const mp of post.matchedPatterns) {
+      const keyword = mp.pattern.slice(0, 20);
+      keywordCounts[keyword] = (keywordCounts[keyword] || 0) + 1;
+    }
+  }
+
+  const keywords = Object.entries(keywordCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([keyword, count], index) => ({
+      rank: index + 1,
+      keyword,
+      count,
+      trend: 'same' as const, // Could implement actual trend calculation later
+    }));
+
+  return keywords;
+};
+
 export const updateAggregates = async (groupId: string) => {
   // This would be called by a cron job or after post creation
   for (const period of ['7d', '30d', 'all'] as const) {

@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { z } from 'zod';
 import { AuthRequest } from '../middlewares/index.js';
 import * as postService from '../services/post.service.js';
+import * as aggregateService from '../services/aggregate.service.js';
 import { POST_TAGS, EMOTION_TAGS } from '@evil-spirit/shared';
 
 const createPostSchema = z.object({
@@ -78,5 +79,16 @@ export const removeBookmark = async (req: AuthRequest, res: Response): Promise<v
   res.json({
     success: true,
     data: { bookmarked: false },
+  });
+};
+
+export const getTrendingKeywords = async (req: AuthRequest, res: Response): Promise<void> => {
+  const limit = req.query.limit ? parseInt(req.query.limit as string) : 4;
+
+  const result = await aggregateService.getGlobalTrendingKeywords(limit);
+
+  res.json({
+    success: true,
+    data: result,
   });
 };
