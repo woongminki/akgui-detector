@@ -189,6 +189,8 @@ export const getDashboard = async (
       insufficient: true,
       threshold: DASHBOARD_THRESHOLD,
       currentCount: group.postCount,
+      totalPosts: group.postCount,
+      avgScore: 0,
       message: `대시보드를 표시하려면 최소 ${DASHBOARD_THRESHOLD}개의 글이 필요합니다.`,
     };
   }
