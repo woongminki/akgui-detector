@@ -66,12 +66,10 @@ const postSchema = new Schema<IPostDocument>(
     },
     tags: {
       type: [String],
-      enum: ['야근', '인격모독', '업무지시', '평가', '회식', '보고', '회의', '기타'],
       default: [],
     },
     emotionTag: {
       type: String,
-      enum: ['분노', '슬픔', '불안', '무력감', '혼란', '기타'],
       required: true,
     },
     detectionScore: {
