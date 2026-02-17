@@ -54,9 +54,9 @@ export function WriteScreen() {
   const [result, setResult] = useState<PostResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const toggleEmotion = (emotion: string) => {
+  const selectEmotion = (emotion: string) => {
     setEmotions((prev) =>
-      prev.includes(emotion) ? prev.filter((e) => e !== emotion) : [...prev, emotion]
+      prev.includes(emotion) ? [] : [emotion] // Single selection only
     );
   };
 
@@ -89,7 +89,7 @@ export function WriteScreen() {
         groupId: currentGroup.id,
         content: quote,
         tags: [situation],
-        emotionTag: emotions.join(", "),
+        emotionTag: emotions[0], // Send only first emotion (backend accepts single value)
         idempotencyKey: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       });
 
@@ -303,13 +303,13 @@ export function WriteScreen() {
 
       {/* Emotion Selection */}
       <section className="mb-8">
-        <label className="mb-2 block text-sm font-medium text-foreground">느낀 감정 (복수 선택)</label>
+        <label className="mb-2 block text-sm font-medium text-foreground">느낀 감정</label>
         <div className="flex flex-wrap gap-2">
           {emotionOptions.map((opt) => (
             <button
               key={opt}
               type="button"
-              onClick={() => toggleEmotion(opt)}
+              onClick={() => selectEmotion(opt)}
               className={cn(
                 "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
                 emotions.includes(opt)
