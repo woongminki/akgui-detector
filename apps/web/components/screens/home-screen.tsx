@@ -166,9 +166,9 @@ export function HomeScreen() {
             <Flame className="h-5 w-5 text-primary" />
             실시간 악귀 언어 TOP
           </h2>
-          <button type="button" className="text-sm text-muted-foreground hover:text-foreground">
+          <Link href="/trending" className="text-sm text-muted-foreground hover:text-foreground">
             더보기
-          </button>
+          </Link>
         </div>
         {trendingKeywords.length > 0 ? (
           <div className="grid grid-cols-2 gap-2">
